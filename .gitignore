@@ -1,0 +1,25 @@
+## 环境/配置
+.env
+settings.json
+
+## 数据文件（太大，不适合进 git）
+*.csv
+
+## 生成图表
+*.png
+
+## IDE/编辑器
+.claude/
+.codex/
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+
+## 部署密钥
+*.key
+*.pem
+
+## 系统
+Thumbs.db
+.DS_Store

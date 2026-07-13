@@ -1,0 +1,60 @@
+============================================================
+量化环境配置速查表 - 2026-06-19
+============================================================
+
+【EC2 服务器信息】
+  IP 地址   : 35.79.227.224
+  用户名    : ec2-user
+  密钥文件  : C:\Users\Administrator\Desktop\fmz-key-2026.pem
+  系统      : Amazon Linux 2023
+  Python    : 3.12.13 (python3.12)
+  pandas-ta : 0.4.71b0
+  pandas    : 3.0.3
+  numpy     : 2.2.6
+
+【SSH 登录 EC2】
+  ssh -i "C:\Users\Administrator\Desktop\fmz-key-2026.pem" ec2-user@35.79.227.224
+
+【SCP 上传文件到 EC2】
+  scp -i "C:\Users\Administrator\Desktop\fmz-key-2026.pem" 本地文件 ec2-user@35.79.227.224:~/
+
+【本地 Windows - Python 3.12 安装步骤】
+  1. 下载 https://www.python.org/downloads/ -> Python 3.12.x Windows 64-bit
+  2. 安装时勾选 "Add Python to PATH"
+  3. 出现长路径提示时输入 y 并回车，允许长路径
+  4. 安装完重启电脑
+  5. 重启后打开 cmd，执行：
+     pip install numpy pandas pandas-ta
+
+【本地写策略回测 -> 上传 EC2 实盘 工作流】
+  1. 本地 VSCode 写 xxx.py
+  2. 本地 cmd: python xxx.py  测试回测效果
+  3. 满意后上传: scp -i "C:\Users\Administrator\Desktop\fmz-key-2026.pem" xxx.py ec2-user@35.79.227.224:~/
+  4. SSH 登录 EC2: ssh -i "C:\Users\Administrator\Desktop\fmz-key-2026.pem" ec2-user@35.79.227.224
+  5. EC2 上执行: python3.12 xxx.py
+  6. 后台常驻: nohup python3.12 xxx.py > strategy.log 2>&1 &
+
+【pandas-ta 常用 API (新版 0.4.71b0)】
+  import pandas_ta as ta
+  import pandas as pd
+  import numpy as np
+
+  df = pd.DataFrame({'close': ...})  # 你的行情数据
+  df.ta.sma(length=20)      # 简单移动平均
+  df.ta.ema(length=20)      # 指数移动平均
+  df.ta.rsi(length=14)      # RSI
+  df.ta.macd()               # MACD
+  df.ta.bbands(length=20)   # 布林带
+  df.ta.atr(length=14)      # ATR
+  df.ta.obv()                # 能量潮
+  df.ta.adx(length=14)      # ADX
+
+  小写调用，DataFrame 链式编程：df.ta.指标名()
+
+【设置别名 - EC2上默认用 python3.12】
+  SSH 到 EC2 后执行一次:
+  echo "alias python=python3.12" >> ~/.bashrc
+  echo "alias pip=pip3.12" >> ~/.bashrc
+  source ~/.bashrc
+
+============================================================

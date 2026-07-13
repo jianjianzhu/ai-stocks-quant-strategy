@@ -1,0 +1,86 @@
+{
+  "date": "2026-06-27",
+  "tickers": {
+    "NVDA": {
+      "close": 191.97,
+      "signals": [],
+      "macd_state": "bearish",
+      "macd_histogram": -3.7532291096016466,
+      "histogram_trend": "falling",
+      "atr": 7.237940391607559,
+      "adx": 15.799460792092061,
+      "trend_filter": "\u2705 above 200EMA",
+      "price_above_emas": false
+    },
+    "AMD": {
+      "close": 520.2,
+      "signals": [],
+      "macd_state": "bearish",
+      "macd_histogram": -7.213215283647925,
+      "histogram_trend": "falling",
+      "atr": 32.667886539075255,
+      "adx": 23.821840483806653,
+      "trend_filter": "\u2705 above 200EMA",
+      "price_above_emas": false
+    },
+    "AVGO": {
+      "close": 363.91,
+      "signals": [],
+      "macd_state": "bearish",
+      "macd_histogram": -5.502423752269484,
+      "histogram_trend": "falling",
+      "atr": 19.306676694945825,
+      "adx": 19.434497905271975,
+      "trend_filter": "\u2705 above 200EMA",
+      "price_above_emas": false
+    },
+    "TSM": {
+      "close": 431.91,
+      "signals": [
+        {
+          "type": "SELL",
+          "desc": "MACD crossed below 0 or EMA death cross"
+        }
+      ],
+      "macd_state": "bearish",
+      "macd_histogram": -5.6827108780145545,
+      "histogram_trend": "falling",
+      "atr": 18.12323325740255,
+      "adx": 17.38847397471611,
+      "trend_filter": "\u2705 above 200EMA",
+      "price_above_emas": false
+    },
+    "MU": {
+      "close": 1123.835,
+      "signals": [
+        {
+          "type": "SELL",
+          "desc": "MACD crossed below 0 or EMA death cross"
+        }
+      ],
+      "macd_state": "bearish",
+      "macd_histogram": -2.584265411868941,
+      "histogram_trend": "falling",
+      "atr": 94.9033647890735,
+      "adx": 24.406960603894767,
+      "trend_filter": "\u2705 above 200EMA",
+      "price_above_emas": true
+    },
+    "SMCI": {
+      "close": 30.635,
+      "signals": [
+        {
+          "type": "SELL",
+          "desc": "MACD crossed below 0 or EMA death cross"
+        }
+      ],
+      "macd_state": "bearish",
+      "macd_histogram": -0.24886366133135185,
+      "histogram_trend": "falling",
+      "atr": 3.2551082631022297,
+      "adx": 22.918750969062497,
+      "trend_filter": "\u274c below 200EMA",
+      "price_above_emas": false
+    }
+  }
+}

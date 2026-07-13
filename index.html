@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小王停车历险记 — 道路违停法规解说漫画</title>
+<style>
+/* ========== 基础重置 & 全局样式 ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  background: #f5f0e8;
+  color: #2c2c2c;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* ========== 主容器 ========== */
+.container {
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 12px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+/* ========== 页头 ========== */
+.header {
+  text-align: center;
+  padding: 20px 10px 10px;
+  position: relative;
+}
+.header h1 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1a3a5c;
+  letter-spacing: 1px;
+}
+.header h1 span { color: #e74c3c; }
+.header .subtitle {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+}
+/* ========== 进度条 ========== */
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 12px 0 16px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-bar .fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #2ecc71);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.progress-bar .prog-text {
+  position: absolute;
+  right: 0;
+  top: 8px;
+  font-size: 0.7rem;
+  color: #999;
+}
+/* ========== 漫画区 ========== */
+.comic-page {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  animation: fadeIn 0.4s ease;
+}
+.comic-page.active { display: flex; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== 漫画插图面板 ========== */
+.comic-panel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 18px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  position: relative;
+  border: 3px solid #2c3e50;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+/* 漫画格装饰角 */
+.comic-panel::before {
+  content: "▼";
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+/* 漫画页码角标 */
+.comic-panel .page-badge {
+  position: absolute;
+  top: -10px;
+  right: 16px;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 12px;
+  border-radius: 10px;
+}
+
+/* ========== 漫画场景（CSS 绘制） ========== */
+.scene {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.scene .road {
+  width: 100%;
+  height: 24px;
+  background: #555;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.scene .road::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, #fff 0 12px, transparent 12px 24px);
+  transform: translateY(-50%);
+}
+.scene .sidewalk {
+  width: 100%;
+  height: 20px;
+  background: #c8b896;
+  border-radius: 3px;
+  position: relative;
+}
+.scene .sidewalk::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 8px;
+  width: 2px;
+  background: repeating-linear-gradient(180deg, #a09070 0 4px, transparent 4px 8px);
+}
+/* 角色（人物用 emoji + CSS） */
+.char {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.char .avatar {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.15));
+}
+.char .name-tag {
+  font-size: 0.7rem;
+  background: #3498db;
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+/* 对话气泡 */
+.bubble {
+  background: #fff;
+  border: 2.5px solid #2c3e50;
+  border-radius: 16px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 85%;
+  position: relative;
+  margin: 4px 0;
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.08);
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-left: 2.5px solid #2c3e50;
+  border-bottom: 2.5px solid #2c3e50;
+  transform: rotate(-45deg);
+}
+.bubble.left::before { left: -6px; top: 14px; }
+.bubble.right::before { right: -6px; top: 14px; }
+.bubble.center::before { display: none; }
+.bubble.think {
+  border-style: dashed;
+  border-color: #95a5a6;
+}
+.bubble.think::before { display: none; }
+
+/* 交通标志 CSS 绘制 */
+.sign {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.2;
+  margin: 4px;
+  flex-shrink: 0;
+}
+.sign.prohibition {
+  background: #fff;
+  border: 4px solid #e74c3c;
+  color: #333;
+}
+.sign.prohibition::after {
+  content: "";
+}
+.sign.warning {
+  background: #fff;
+  border: 4px solid #f39c12;
+  color: #333;
+}
+.sign.mandatory {
+  background: #3498db;
+  color: #fff;
+  border: none;
+}
+/* 黄色实线 */
+.yellow-line-solid {
+  width: 80%;
+  height: 6px;
+  background: #f1c40f;
+  border-radius: 3px;
+  margin: 8px auto;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.yellow-line-dashed {
+  width: 80%;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, #f1c40f 0 20px, transparent 20px 28px);
+  border-radius: 3px;
+  margin: 8px auto;
+}
+/* ========== 解说文字区 ========== */
+.explanation {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-left: 4px solid #3498db;
+}
+.explanation h3 {
+  font-size: 1rem;
+  color: #1a3a5c;
+  margin-bottom: 8px;
+}
+.explanation h3 .icon { margin-right: 6px; }
+.explanation ul {
+  list-style: none;
+  padding: 0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+.explanation ul li {
+  padding: 2px 0 2px 20px;
+  position: relative;
+}
+.explanation ul li::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  color: #3498db;
+  font-weight: 700;
+}
+.explanation .tip {
+  background: #fef9e7;
+  border: 1px solid #f9e79f;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: #7d6608;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.explanation .tip:hover {
+  background: #fdebd0;
+  transform: translateY(-1px);
+}
+
+/* ========== 法规详情弹窗 ========== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.show { display: flex; }
+.modal-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-card .close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #999;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+.modal-card .close-btn:hover { color: #333; }
+.modal-card h4 {
+  font-size: 1rem;
+  color: #1a3a5c;
+  margin-bottom: 12px;
+  padding-right: 30px;
+}
+.modal-card p {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: #555;
+}
+.modal-card .law-ref {
+  display: inline-block;
+  background: #ecf0f1;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  margin-top: 8px;
+}
+
+/* ========== 导航 ========== */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px 0 12px;
+}
+.nav button {
+  background: #2c3e50;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav button:hover:not(:disabled) {
+  background: #34495e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44,62,80,0.3);
+}
+.nav button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.nav .page-indicator {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  font-weight: 500;
+  min-width: 50px;
+  text-align: center;
+}
+/* 页面点导航 */
+.dot-nav {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 0 16px;
+}
+.dot-nav .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ddd;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+.dot-nav .dot.active {
+  background: #2c3e50;
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ========== 处罚总结表 ========== */
+.penalty-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin: 10px 0;
+}
+.penalty-table th {
+  background: #1a3a5c;
+  color: #fff;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 600;
+}
+.penalty-table th:first-child { border-radius: 8px 0 0 0; }
+.penalty-table th:last-child { border-radius: 0 8px 0 0; }
+.penalty-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid #eee;
+}
+.penalty-table tr:nth-child(even) td { background: #f8f9fa; }
+.penalty-table .fine { color: #e74c3c; font-weight: 700; }
+.penalty-table .points { color: #e67e22; font-weight: 700; }
+.penalty-table .good { color: #27ae60; font-weight: 700; }
+
+/* ========== 结尾页特殊样式 ========== */
+.summary-box {
+  background: linear-gradient(135deg, #1a3a5c, #2c3e50);
+  color: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 10px 0;
+}
+.summary-box h4 { color: #f1c40f; margin-bottom: 8px; font-size: 0.95rem; }
+.summary-box ul { list-style: none; padding: 0; }
+.summary-box li {
+  padding: 4px 0 4px 20px;
+  position: relative;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.summary-box li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #2ecc71;
+  font-weight: 700;
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 480px) {
+  .container { padding: 8px; }
+  .header h1 { font-size: 1.15rem; }
+  .comic-panel { padding: 18px 12px 16px; min-height: 200px; }
+  .char .avatar { font-size: 2.5rem; }
+  .bubble { font-size: 0.82rem; padding: 8px 12px; max-width: 90%; }
+  .explanation { padding: 14px 16px; }
+  .explanation h3 { font-size: 0.92rem; }
+  .explanation ul { font-size: 0.82rem; }
+  .nav button { padding: 8px 18px; font-size: 0.82rem; }
+  .sign { width: 52px; height: 52px; font-size: 0.55rem; }
+  .modal-card { padding: 20px 16px; }
+}
+
+/* ========== 页脚 ========== */
+.footer {
+  text-align: center;
+  padding: 20px 0 30px;
+  font-size: 0.75rem;
+  color: #aaa;
+  margin-top: auto;
+}
+.footer a { color: #888; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ===== 页头 ===== -->
+  <div class="header">
+    <h1>🚗 小王停车<span>历险记</span></h1>
+    <div class="subtitle">—— 道路违停法规解说漫画</div>
+  </div>
+
+  <!-- ===== 进度条 ===== -->
+  <div class="progress-bar">
+    <div class="fill" id="progressFill"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 第 1 页：故事引入                                                   -->
+  <!-- ============================================================ -->
+  <div class="comic-page active" data-page="1">
+    <div class="comic-panel">
+      <span class="page-badge">START</span>
+      <div class="scene" style="gap:12px;">
+        <div class="char">
+          <div class="avatar">🧑‍💼</div>
+          <div class="name-tag">小王</div>
+        </div>
+        <div class="bubble think center" style="text-align:center;font-size:1.1rem;">
+          "今天要去市中心办事，<br>希望好找车位……"
+        </div>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <span style="font-size:1.8rem;">🏢</span>
+          <span style="font-size:1.8rem;">🏪</span>
+          <span style="font-size:1.8rem;">🏥</span>
+        </div>
+        <!-- 马路场景 -->
+        <div style="width:100%;">
+          <div class="road"></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 10px 0;">
+            <span style="font-size:0.7rem;color:#999;">🚗 🚙 🚕</span>
+            <span style="font-size:0.7rem;color:#999;">→ → →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="explanation">
+      <h3><span class="icon">🎬</span>故事开始</h3>
+      <ul>
+        <li>周末，小王开车去市中心办事</li>
+        <li>他知道市区停车难，但还是抱着侥幸心理出发了</li>
+        <li>到了目的地，绕着街区转了一圈又一圈……</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 第 2 页：禁停标志                                               -->
+  <!-- ============================================================ -->
+  <div class="comic-page" data-page="2">
+    <div class="comic-panel">
+      <div class="scene" style="gap:8px;">
+        <div style="display:flex;align-items:center;gap:12px;width:100%;justify-content:center;">
+          <div class="char">
+            <div class="avatar">🧑‍💼</div>
+            <div class="name-tag">小王</div>
+          </div>
+          <div class="bubble left" style="max-width:55%;">
+            "咦？这个标志是……<br>不能停车的意思？"
+          </div>
+        </div>
+        <!-- 禁停标志 -->
+        <div style="display:flex;gap:16px;margin:10px 0;flex-wrap:wrap;justify-content:center;">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="sign prohibition" style="position:relative;">
+              <span style="position:relative;z-index:1;font-size:0.5rem;">🚫</span>
+            </div>
+            <span style="font-size:0.7rem;color:#555;margin-top:4px;">禁止停车</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="sign prohibition" style="position:relative;">
+              <span style="position:relative;z-index:1;font-size:0.55rem;line-height:1.1;">禁<br>止<br>长<br>时<br>停</span>
+            </div>
+            <span style="font-size:0.7rem;color:#555;margin-top:4px;">禁止长时停车</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="sign prohibition" style="position:relative;border-color:#3498db;">
+              <span style="position:relative;z-index:1;font-size:0.6rem;font-weight:700;color:#e74c3c;">P</span>
+              <span style="position:absolute;top:-4px;right:-4px;font-size:0.6rem;color:#e74c3c;">✕</span>
+            </div>
+            <span style="font-size:0.7rem;color:#555;margin-top:4px;">禁止停放</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="explanation">
+      <h3><span class="icon">🚫</span>认识禁停标志</h3>
+      <ul>
+        <li><strong>禁止停车标志</strong>：红色圆圈 + 蓝底 + 红色大叉 ✕ —— 这条路/区域任何情况都不能停车</li>
+        <li><strong>禁止长时停车标志</strong>：红色圆圈 + 蓝底 + 红色斜杠 ╱ —— 可以临时上下客，但不能长时间停放</li>
+        <li>看到这两个标志，<strong>千万别停</strong>！</li>
+      </ul>
+      <div class="tip" onclick="showModal('modalSign')">
+        💡 点击查看：禁止停车 vs 禁止长时停车的详细区别
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 第 3 页：黄色实线 vs 黄色虚线                                     -->
+  <!-- ============================================================ -->
+  <div class="comic-page" data-page="3">
+    <div class="comic-panel">
+      <div class="scene" style="gap:6px;">
+        <div style="display:flex;align-items:center;gap:10px;width:100%;justify-content:center;">
+          <div class="char">
+            <div class="avatar">🧑‍💼</div>
+            <div class="name-tag">小王</div>
+          </div>
+          <div class="bubble left">
+            "路边画了黄线，<br>这能停吗？"
+          </div>
+          <div style="font-size:2rem;">👮</div>
+          <div class="bubble right">
+            "小伙子，黄色实线<br>可不能停！"
+          </div>
+        </div>
+        <!-- 黄色实线 -->
+        <div style="width:100%;margin:8px 0;">
+          <div style="display:flex;align-items:center;gap:8px;justify-content:center;">
+            <div class="yellow-line-solid"></div>
+            <span style="font-size:0.75rem;font-weight:700;color:#e74c3c;white-space:nowrap;">❌ 全线禁停</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-top:6px;">
+            <div class="yellow-line-dashed"></div>
+            <span style="font-size:0.75rem;color:#e67e22;white-space:nowrap;">⚠️ 禁止长停</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="explanation">
+      <h3><span class="icon">🟡</span>路沿黄色标线</h3>
+      <ul>
+        <li><strong>黄色实线</strong>：画在路缘石或道路边缘——<strong>全线禁止停车</strong>，临时停车也不行！</li>
+        <li><strong>黄色虚线</strong>：禁止长时停车，但允许临时停车（上下客、装卸货物，即停即走）</li>
+        <li>违停黄色实线路段：罚款 <strong>200元</strong>，记 <strong>3分</strong></li>
+      </ul>
+      <div class="tip" onclick="showModal('modalYellow')">
+        💡 点击查看：临时停车到底能停多久？
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 第 4 页：人行道/盲道违停                                          -->
+  <!-- ============================================================ -->
+  <div class="comic-page" data-page="4">
+    <div class="comic-panel">
+      <div class="scene" style="gap:6px;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;">
+          <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+            <div class="char">
+              <div class="avatar">🧑‍💼</div>
+              <div class="name-tag">小王</div>
+            </div>
+            <div class="bubble left" style="max-width:50%;">
+              "他们都停人行道上，<br>我也停这儿算了！"
+            </div>
+          </div>
+          <!-- 人行道场景 -->
+          <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:2px;">
+            <div style="display:flex;gap:4px;font-size:1.5rem;">
+              <span class="avatar">🚗</span>
+              <span class="avatar">🚙</span>
+              <span class="avatar">🚗</span>
+            </div>
+            <div class="sidewalk" style="height:16px;"></div>
+            <div class="road"></div>
+          </div>
+          <div class="bubble think center" style="font-size:0.8rem;color:#e74c3c;border-color:#e74c3c;">
+            ⚠️ 这其实是违章行为！
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="explanation">
+      <h3><span class="icon">🚶</span>人行道、盲道禁止停车</h3>
+      <ul>
+        <li><strong>人行道</strong>是行人通行的专用通道，机动车禁止占道停放</li>
+        <li><strong>盲道</strong>是为视障人士设置的无障碍设施，占用盲道停车属于严重违规</li>
+        <li>处罚：罚款 <strong>200元</strong>（部分地区可能拖车）</li>
+        <li>停在人行道还会阻碍行人通行，甚至引发事故</li>
+      </ul>
+      <div class="tip" onclick="showModal('modalSidewalk')">
+        💡 点击查看：人行道违停被贴条了怎么办？
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 第 5 页：消防通道违停（被贴条）                                     -->
+  <!-- ============================================================ -->
+  <div class="comic-page" data-page="5">
+    <div class="comic-panel">
+      <div class="scene" style="gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;width:100%;justify-content:center;">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="font-size:2.5rem;">🚒</div>
+            <span style="font-size:0.6rem;color:#e74c3c;font-weight:700;">消防通道</span>
+          </div>
+          <div class="char">
+            <div class="avatar">😰</div>
+            <div class="name-tag">小王</div>
+          </div>
+          <div class="bubble right" style="border-color:#e74c3c;max-width:50%;">
+            "我就停五分钟……<br>啊？被贴条了？！"
+          </div>
+        </div>
+        <!-- 罚单 -->
+        <div style="background:#fef9e7;border:2px dashed #e74c3c;border-radius:8px;padding:10px 16px;margin:6px 0;text-align:center;font-size:0.78rem;max-width:260px;">
+          <strong style="color:#e74c3c;">📋 违法停车告知单</strong><br>
+          车牌：京A·XXXXX &nbsp;|&nbsp; 违停时间：10:25<br>
+          地点：XX路消防通道<br>
+          <span style="color:#e74c3c;">罚金：200元 &nbsp; 记分：3分</span>
+        </div>
+        <div style="width:100%;">
+          <div class="road"></div>
+          <div style="background:#e74c3c;height:3px;width:100%;border-radius:2px;margin-top:2px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="explanation">
+      <h3><span class="icon">🔥</span>消防通道 = 生命通道</h3>
+      <ul>
+        <li><strong>消防通道</strong>是火灾等紧急情况时消防车通行的生命通道</li>
+        <li>占用消防通道停车属于<strong>严重交通违法行为</strong></li>
+        <li>处罚：罚款 <strong>200元</strong>，记 <strong>3分</strong>（部分地区可罚500元并拖车）</li>
+        <li>如果因占用消防通道耽误救援，还可能面临<strong>民事赔偿</strong>甚至<strong>刑事责任</strong></li>
+      </ul>
+      <div class="tip" onclick="showModal('modalFire')">
+        💡 点击查看：消防通道违停的真实案例
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 第 6 页：正确停车方式                                             -->
+  <!-- ============================================================ -->
+  <div class="comic-page" data-page="6">
+    <div class="comic-panel">
+      <div class="scene" style="gap:6px;">
+        <div style="display:flex;align-items:center;gap:10px;width:100%;justify-content:center;">
+          <div class="char">
+            <div class="avatar">😊</div>
+            <div class="name-tag">小王</div>
+          </div>
+          <div class="bubble left" style="max-width:50%;">
+            "终于找到正规车位了！<br>这回我可要停对！"
+          </div>
+          <div style="font-size:2rem;">🅿️</div>
+        </div>
+        <!-- 正确停车示意 -->
+        <div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:4px;margin:6px 0;">
+          <div style="display:flex;gap:20px;font-size:1.5rem;align-items:center;">
+            <span style="opacity:0.4;">🚗</span>
+            <span style="font-size:2rem;">🚗</span>
+            <span style="opacity:0.4;">🚗</span>
+          </div>
+          <div style="width:80%;height:4px;background:#fff;border:2px dashed #27ae60;border-radius:2px;"></div>
+          <div style="display:flex;gap:20px;font-size:0.65rem;color:#27ae60;">
+            <span>✓ 入位</span>
+            <span>✓ 顺向</span>
+            <span>✓ 不压线</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="explanation">
+      <h3><span class="icon">✅</span>正确停车三步走</h3>
+      <ul>
+        <li><strong>① 找对地方</strong>：停在正规收费/免费泊位，确认没有禁停标志和黄线</li>
+        <li><strong>② 顺向入位</strong>：按道路行驶方向顺向停车，车身完全进入车位线内</li>
+        <li><strong>③ 不压线不越线</strong>：车轮不压车位线，不占用相邻车位</li>
+        <li><strong>收费泊位</strong>：注意查看收费时段和收费标准，及时缴费<br>
+            <strong>免费泊位</strong>：注意限时停放规定，超时可能被视为违停</li>
+      </ul>
+      <div class="tip" onclick="showModal('modalPark')">
+        💡 点击查看：停车被挡了怎么办？教你正确挪车方法
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 第 7 页：违停处罚总结 + 故事收尾                                   -->
+  <!-- ============================================================ -->
+  <div class="comic-page" data-page="7">
+    <div class="comic-panel" style="background:linear-gradient(180deg,#fff,#f0f8ff);">
+      <div class="scene" style="gap:8px;">
+        <div style="display:flex;align-items:center;gap:12px;justify-content:center;">
+          <div class="char">
+            <div class="avatar">😎</div>
+            <div class="name-tag">小王</div>
+          </div>
+          <div class="bubble center" style="text-align:center;font-size:0.95rem;border-color:#27ae60;">
+            "今天学到了！<br>以后一定规范停车 🅿️"
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;font-size:2rem;">
+          <span>👍</span>
+          <span>✅</span>
+          <span>🚗</span>
+        </div>
+      </div>
+    </div>
+    <div class="summary-box">
+      <h4>📊 违停处罚速查表</h4>
+      <table class="penalty-table">
+        <thead>
+          <tr><th>违停类型</th><th>罚款</th><th>记分</th><th>备注</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>黄色实线路段违停</td><td class="fine">200元</td><td class="points">3分</td><td>严禁停车，包括临时</td></tr>
+          <tr><td>黄色虚线路段长停</td><td class="fine">100元</td><td class="points">—</td><td>允许即停即走</td></tr>
+          <tr><td>禁停标志区域违停</td><td class="fine">200元</td><td class="points">3分</td><td>含路口50米内</td></tr>
+          <tr><td>人行道/盲道违停</td><td class="fine">200元</td><td class="points">—</td><td>可能被拖车</td></tr>
+          <tr><td>消防通道违停</td><td class="fine">200~500元</td><td class="points">3分</td><td>严重违章</td></tr>
+          <tr><td>逆向停车</td><td class="fine">200元</td><td class="points">—</td><td>未顺向停放</td></tr>
+          <tr><td>压线/越线停车</td><td class="fine">100元</td><td class="points">—</td><td>未完全入位</td></tr>
+          <tr><td>占用专用车位</td><td class="fine">200元</td><td class="points">—</td><td>残障/新能源专用</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="explanation" style="border-left-color:#27ae60;">
+      <h3><span class="icon">🎯</span>小王停车心得</h3>
+      <ul>
+        <li>🚫 看到禁停标志或黄实线——<strong>果断走人</strong></li>
+        <li>🚶 人行道、盲道、消防通道——<strong>碰都不要碰</strong></li>
+        <li>🅿️ 找到正规车位——<strong>顺向、入位、不压线</strong></li>
+        <li>💰 违停罚款100~500元，记分0~3分——<strong>省下来的钱够加好几箱油</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== 导航 ===== -->
+  <div class="nav">
+    <button id="prevBtn" onclick="changePage(-1)" disabled>◀ 上一页</button>
+    <span class="page-indicator" id="pageIndicator">1 / 7</span>
+    <button id="nextBtn" onclick="changePage(1)">下一页 ▶</button>
+  </div>
+  <div class="dot-nav" id="dotNav"></div>
+
+  <!-- ===== 页脚 ===== -->
+  <div class="footer">
+    本内容仅供科普参考，具体法规以当地交管部门最新规定为准。<br>
+    根据《中华人民共和国道路交通安全法》及相关实施条例整理
+  </div>
+
+</div><!-- /container -->
+
+<!-- ===== 知识卡片弹窗 ===== -->
+
+<!-- 标志区别 -->
+<div class="modal-overlay" id="modalSign">
+  <div class="modal-card">
+    <button class="close-btn" onclick="hideModal('modalSign')">&times;</button>
+    <h4>🚫 禁止停车 vs 禁止长时停车</h4>
+    <p><strong>禁止停车标志</strong>（红圈蓝底红叉 ✕）：</p>
+    <p style="margin-bottom:10px;">从设置点起，<strong>全线禁止任何车辆停放或临时停车</strong>。哪怕你只是熄火等个人、下车买个水，都不行。</p>
+    <p><strong>禁止长时停车标志</strong>（红圈蓝底一斜杠 ╱）：</p>
+    <p style="margin-bottom:10px;">允许<strong>临时停车</strong>，但禁止长时间停放。所谓"临时"是指驾驶人<strong>不离开车辆、即停即走</strong>。</p>
+    <p style="color:#e74c3c;">简单记：红叉 = 一秒钟都不能停，斜杠 = 快停快走！</p>
+    <span class="law-ref">📖 《道路交通安全法实施条例》第63条</span>
+  </div>
+</div>
+
+<!-- 黄色标线 -->
+<div class="modal-overlay" id="modalYellow">
+  <div class="modal-card">
+    <button class="close-btn" onclick="hideModal('modalYellow')">&times;</button>
+    <h4>🟡 临时停车到底能停多久？</h4>
+    <p>法律上对"临时停车"没有精确到分钟的硬性规定，但判断标准通常包括：</p>
+    <p>① <strong>驾驶人不离开车辆</strong>，随时可以驶离</p>
+    <p>② <strong>不妨碍其他车辆和行人通行</strong></p>
+    <p>③ 在允许临时停车的路段，<strong>即停即走</strong>（通常建议不超过3分钟）</p>
+    <p style="margin-top:10px;color:#e67e22;">⚠️ 注意：黄色<strong>实线</strong>路段连临时停车都不允许！只有黄色<strong>虚线</strong>路段才可以临时停靠。</p>
+    <span class="law-ref">📖 《道路交通安全法实施条例》第63条</span>
+  </div>
+</div>
+
+<!-- 人行道 -->
+<div class="modal-overlay" id="modalSidewalk">
+  <div class="modal-card">
+    <button class="close-btn" onclick="hideModal('modalSidewalk')">&times;</button>
+    <h4>🧾 人行道违停被贴条了怎么办？</h4>
+    <p>如果被贴了《违法停车告知单》：</p>
+    <p>① 确认是否收到短信通知（12123平台会发送）</p>
+    <p>② 下载"交管12123"APP，在线处理（罚款200元，通常不记分）</p>
+    <p>③ 15天内缴纳罚款，逾期有滞纳金</p>
+    <p>④ <strong>异议申诉</strong>：如果确实没有禁停标志、且停在正规泊位内，可以在APP上提交申诉</p>
+    <p style="margin-top:10px;color:#27ae60;">💡 建议：发现贴条后尽快驶离，避免被拖车（拖车费另算）</p>
+    <span class="law-ref">📖 《道路交通安全法》第56条、第93条</span>
+  </div>
+</div>
+
+<!-- 消防通道 -->
+<div class="modal-overlay" id="modalFire">
+  <div class="modal-card">
+    <button class="close-btn" onclick="hideModal('modalFire')">&times;</button>
+    <h4>🔥 真实案例：消防通道违停的代价</h4>
+    <p>2020年，某小区发生火灾，消防车被占用消防通道的私家车堵住，延误救援导致失火住户损失扩大。最终：</p>
+    <p>• 违停车主被处以 <strong>500元罚款 + 记3分</strong></p>
+    <p>• 承担 <strong>部分民事赔偿责任</strong>（数万元）</p>
+    <p style="margin-top:10px;">消防通道宽度要求≥4米，转弯半径≥9米。一辆普通轿车就足以堵塞整个通道。</p>
+    <p style="color:#e74c3c;margin-top:8px;">🚒 消防通道 = 生命通道，切勿占用！</p>
+    <span class="law-ref">📖 《消防法》第28条、第60条</span>
+  </div>
+</div>
+
+<!-- 停车被挡 -->
+<div class="modal-overlay" id="modalPark">
+  <div class="modal-card">
+    <button class="close-btn" onclick="hideModal('modalPark')">&times;</button>
+    <h4>🅿️ 车被挡了怎么办？</h4>
+    <p><strong>方法一：交管12123 "一键挪车"</strong></p>
+    <p>打开APP → 便民服务 → 一键挪车 → 输入对方车牌号和位置，系统会自动发短信通知车主。</p>
+    <p><strong>方法二：拨打114</strong></p>
+    <p>拨打114 → 转接挪车服务 → 提供对方车牌号，114会联系车主。</p>
+    <p><strong>方法三（紧急）：报警</strong></p>
+    <p>如果对方占用消防通道或严重影响通行，可拨打122求助交警处理。</p>
+    <p style="margin-top:10px;color:#e74c3c;">⚠️ 切勿私自划车、砸车、扎胎——这属于故意损毁财物，违法！</p>
+  </div>
+</div>
+
+<!-- ===== JavaScript ===== -->
+<script>
+const totalPages = 7;
+let currentPage = 1;
+
+const pages = document.querySelectorAll('.comic-page');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const pageIndicator = document.getElementById('pageIndicator');
+const progressFill = document.getElementById('progressFill');
+const dotNav = document.getElementById('dotNav');
+
+// 初始化点导航
+for (let i = 1; i <= totalPages; i++) {
+  const dot = document.createElement('button');
+  dot.className = 'dot' + (i === 1 ? ' active' : '');
+  dot.setAttribute('data-page', i);
+  dot.addEventListener('click', () => goToPage(i));
+  dotNav.appendChild(dot);
+}
+
+function updateUI() {
+  pages.forEach(p => p.classList.remove('active'));
+  document.querySelector(`.comic-page[data-page="${currentPage}"]`).classList.add('active');
+
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage === totalPages;
+
+  pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+  progressFill.style.width = `${(currentPage / totalPages) * 100}%`;
+
+  document.querySelectorAll('.dot-nav .dot').forEach(d => {
+    d.classList.toggle('active', parseInt(d.getAttribute('data-page')) === currentPage);
+  });
+}
+
+function changePage(delta) {
+  const newPage = currentPage + delta;
+  if (newPage < 1 || newPage > totalPages) return;
+  currentPage = newPage;
+  updateUI();
+}
+
+function goToPage(page) {
+  if (page < 1 || page > totalPages) return;
+  currentPage = page;
+  updateUI();
+}
+
+// 键盘导航
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changePage(-1);
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') changePage(1);
+});
+
+// 触屏滑动支持
+let touchStartX = 0;
+let touchEndX = 0;
+document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+document.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  const diff = touchStartX - touchEndX;
+  if (Math.abs(diff) > 60) {
+    if (diff > 0) changePage(1);
+    else changePage(-1);
+  }
+});
+
+// 弹窗控制
+function showModal(id) {
+  document.getElementById(id).classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function hideModal(id) {
+  document.getElementById(id).classList.remove('show');
+  document.body.style.overflow = '';
+}
+// 点击遮罩层关闭
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', (e) => {
+    if (e.target === m) {
+      m.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  });
+});
+</script>
+
+</body>
+</html>

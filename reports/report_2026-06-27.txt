@@ -1,0 +1,45 @@
+📊 NVDA — 2026-06-26
+   Price: $191.97
+   MACD: bearish (hist -3.75, falling)
+   EMAs: S=197.88 M=200.43 L=205.06
+   ATR: 7.24 | ADX: 15.8
+   Trend: ✅ above 200EMA | ADX 15.8 ✅
+   ⏸ No new signal
+📊 AMD — 2026-06-26
+   Price: $520.20
+   MACD: bearish (hist -7.21, falling)
+   EMAs: S=524.65 M=522.65 L=509.13
+   ATR: 32.67 | ADX: 23.8
+   Trend: ✅ above 200EMA | ADX 23.8 ✅
+   ⏸ No new signal
+📊 AVGO — 2026-06-26
+   Price: $363.91
+   MACD: bearish (hist -5.50, falling)
+   EMAs: S=377.62 M=382.14 L=392.99
+   ATR: 19.31 | ADX: 19.4
+   Trend: ✅ above 200EMA | ADX 19.4 ✅
+   ⏸ No new signal
+📊 TSM — 2026-06-26
+   Price: $431.91
+   MACD: bearish (hist -5.68, falling)
+   EMAs: S=437.91 M=438.12 L=433.05
+   ATR: 18.12 | ADX: 17.4
+   Trend: ✅ above 200EMA | ADX 17.4 ✅
+   🚨 SIGNALS:
+      🔴 SELL: MACD crossed below 0 or EMA death cross
+📊 MU — 2026-06-26
+   Price: $1123.84
+   MACD: bearish (hist -2.58, falling)
+   EMAs: S=1122.92 M=1103.12 L=1035.84
+   ATR: 94.90 | ADX: 24.4
+   Trend: ✅ above 200EMA | ADX 24.4 ✅
+   🚨 SIGNALS:
+      🔴 SELL: MACD crossed below 0 or EMA death cross
+📊 SMCI — 2026-06-26
+   Price: $30.64
+   MACD: bearish (hist -0.25, falling)
+   EMAs: S=31.71 M=32.16 L=33.75
+   ATR: 3.26 | ADX: 22.9
+   Trend: ❌ below 200EMA | ADX 22.9 ✅
+   🚨 SIGNALS:
+      🔴 SELL: MACD crossed below 0 or EMA death cross

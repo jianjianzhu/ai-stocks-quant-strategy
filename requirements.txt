@@ -1,0 +1,4 @@
+alpaca-py>=0.21.0
+pandas>=1.5.0
+numpy>=1.21.0
+pandas_ta>=0.3.14b0

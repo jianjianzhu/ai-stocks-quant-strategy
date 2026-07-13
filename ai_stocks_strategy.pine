@@ -1,0 +1,177 @@
+//@version=5
+strategy("MACD+EMA AI Stocks Strategy",
+     shorttitle="MACD+EMA AI",
+     overlay=false,
+     initial_capital=100000,
+     default_qty_type=strategy.percent_of_equity,
+     default_qty_value=33,
+     pyramiding=3,
+     commission_value=0.0,
+     commission_type=strategy.commission.percent,
+     slippage=2,
+     currency=currency.USD)
+
+// ========================================== //
+//              USER INPUTS                   //
+// ========================================== //
+
+// -- MACD Parameters --
+fastLen     = input.int(3,   "Fast Length",      group="MACD")
+slowLen     = input.int(11,  "Slow Length",      group="MACD")
+sigLen      = input.int(27,  "Signal Length",    group="MACD")
+
+// -- EMA Crossover Parameters --
+emaShortLen = input.int(3,   "EMA Short",        group="EMA Crossovers")
+emaMidLen   = input.int(11,  "EMA Mid",          group="EMA Crossovers")
+emaLongLen  = input.int(18,  "EMA Long",         group="EMA Crossovers")
+
+// -- Trend Filters --
+useTrendFilt = input.bool(true,  "200 EMA Trend Filter", group="Filters")
+useAdxFilt   = input.bool(true,  "ADX > 20 Filter",      group="Filters")
+adxPeriod    = input.int(14,     "ADX Period",           group="Filters")
+
+// -- Risk Management --
+useStop     = input.bool(true,  "Enable ATR Stop Loss",   group="Risk Management")
+atrStopMult = input.float(3.0,  "ATR Stop Multiplier",    group="Risk Management")
+useTrail    = input.bool(true,  "Enable Trailing Stop",   group="Risk Management")
+trailActPct = input.float(1.5,  "Trail Activation (%)",   group="Risk Management") * 0.01
+trailMult   = input.float(2.0,  "Trail Offset (ATR)",     group="Risk Management")
+atrPeriod   = input.int(14,     "ATR Period",             group="Risk Management")
+
+// -- Trading Session --
+useSess     = input.bool(false,         "Filter by Session",    group="Trading Session")
+sess        = input.session("0930-1600","Trading Hours (ET)",   group="Trading Session")
+startDate   = input.time(timestamp("01 Jan 2020 00:00"), "Start Date", group="Trading Session")
+endDate     = input.time(timestamp("01 Jan 2099 00:00"), "End Date",   group="Trading Session")
+
+// -- Display --
+showMacd    = input.bool(true, "Show MACD",          group="Display")
+showSig     = input.bool(true, "Show Entry Signals", group="Display")
+
+// ========================================== //
+//            INDICATOR CALCULATIONS          //
+// ========================================== //
+
+// MACD
+macdLine   = ta.ema(close, fastLen) - ta.ema(close, slowLen)
+sigLine    = ta.ema(macdLine, sigLen)
+histogram  = macdLine - sigLine
+
+// EMA lines
+emaS       = ta.ema(close, emaShortLen)
+emaM       = ta.ema(close, emaMidLen)
+emaL       = ta.ema(close, emaLongLen)
+ema200     = ta.ema(close, 200)
+
+// ATR & ADX
+atrVal     = ta.atr(atrPeriod)
+adxVal     = ta.adx(high, low, close, adxPeriod)
+
+// ========================================== //
+//              SIGNAL LOGIC                  //
+// ========================================== //
+
+// -- Crossovers --
+macdGoLong  = ta.crossover(histogram, 0)
+macdGoShort = ta.crossunder(histogram, 0)
+crossMid    = ta.crossover(emaS, emaM)
+crossLong   = ta.crossover(emaS, emaL)
+deathCross  = ta.crossunder(emaS, emaM)
+
+// -- Filters --
+trendUp      = close > ema200
+trendOk      = not useTrendFilt or trendUp
+adxStrong    = adxVal > 20
+adxOk        = not useAdxFilt or adxStrong
+
+// -- Time --
+inSession    = na(time(timeframe.period, sess + ":23456"))
+sessionOk    = not useSess or inSession
+dateOk       = time >= startDate and time <= endDate
+allFiltersOk = trendOk and adxOk and sessionOk and dateOk
+
+// -- Entry Conditions (pyramided: 3 levels) --
+enterL1 = macdGoLong and allFiltersOk
+enterL2 = crossMid   and strategy.position_size > 0 and allFiltersOk
+enterL3 = crossLong  and strategy.position_size > 0 and allFiltersOk
+
+// -- Exit Condition --
+exitSignal = macdGoShort or deathCross
+
+// ========================================== //
+//            RISK MANAGEMENT                 //
+// ========================================== //
+
+var float stopPrice = na
+var bool   trailOn  = false
+
+// First entry: set initial ATR-based stop
+if enterL1 and strategy.opentrades == 0
+    stopPrice := close - atrStopMult * atrVal
+    trailOn   := false
+
+// Pyramid entry: ratchet stop higher if warranted
+if enterL2 or enterL3
+    newStop = close - atrStopMult * atrVal
+    if na(stopPrice) or newStop > stopPrice
+        stopPrice := newStop
+
+// Trailing stop: activate after price moves trailActPct in our favor
+if useTrail and strategy.position_size > 0
+    avgPrice = strategy.position_avg_price
+    if not trailOn
+        if close >= avgPrice * (1 + trailActPct)
+            trailOn := true
+            stopPrice := math.max(na(stopPrice) ? 0 : stopPrice, close - trailMult * atrVal)
+    else
+        trailStop = close - trailMult * atrVal
+        stopPrice := math.max(na(stopPrice) ? 0 : stopPrice, trailStop)
+
+// Reset tracking when flat
+if strategy.position_size == 0
+    stopPrice := na
+    trailOn   := false
+
+// Stop loss trigger
+stopHit = useStop and not na(stopPrice) and low <= stopPrice
+
+// ========================================== //
+//              EXECUTION                     //
+// ========================================== //
+
+if enterL1
+    strategy.entry("L1", strategy.long, comment="MACD↑")
+
+if enterL2
+    strategy.entry("L2", strategy.long, comment="EMA↑Mid")
+
+if enterL3
+    strategy.entry("L3", strategy.long, comment="EMA↑Long")
+
+// Exit: signal or stop loss
+if (exitSignal or stopHit) and strategy.position_size > 0
+    strategy.close_all(comment="Exit")
+
+// ========================================== //
+//            VISUALIZATION                   //
+// ========================================== //
+
+// MACD pane
+histColor = histogram > 0 ? color.green : histogram < 0 ? color.red : color.gray
+plot(showMacd ? macdLine  : na, "MACD",     color.blue,   2)
+plot(showMacd ? sigLine   : na, "Signal",   color.orange, 2)
+plot(showMacd ? histogram : na, "Histogram", histColor,    style=plot.style_histogram, linewidth=4)
+hline(0, "Zero", color.gray, hline.style_dotted)
+
+// Entry/exit markers (on price chart via overlay=true trick)
+// Using showSig flag to control visibility
+plotshape(showSig and enterL1, "L1 Entry", shape.triangleup,  location.belowbar,  color.new(color.green, 20), size.tiny)
+plotshape(showSig and enterL2, "L2 Entry", shape.triangleup,  location.belowbar,  color.new(color.lime,  20), size.tiny)
+plotshape(showSig and enterL3, "L3 Entry", shape.triangleup,  location.belowbar,  color.new(color.teal,  20), size.tiny)
+plotshape(showSig and exitSignal and strategy.position_size[1] > 0, "Exit", shape.triangledown, location.abovebar, color.red, size.small)
+
+// Stop price line
+plot(showSig and not na(stopPrice) ? stopPrice : na, "Stop", color.new(color.red, 50), 1, style=plot.style_linebr)
+
+// Date range background
+bgcolor(not dateOk ? color.new(color.gray, 90) : na, title="Out of Range")
