@@ -22,8 +22,10 @@ pip3 install pandas pandas-ta numpy alpaca-trade-api requests 2>&1 | tail -1
 # === 2. 创建 .env ===
 echo "[2/4] 创建配置文件..."
 cat > .env << 'ENVEOF'
-ALPACA_API_KEY=PKCYG2V7KAE2NJAEVCOPWPPNU2
-ALPACA_SECRET_KEY=4G5GkdC2ZHr6ghLKzEwAWUh1Dxn3q4A8An4r9pUaYYwE
+# 在使用前，请将下方的密钥替换为你自己的 Alpaca API 密钥
+# 获取地址: https://app.alpaca.markets/paper/dashboard/overview
+ALPACA_API_KEY=YOUR_PAPER_API_KEY_HERE
+ALPACA_SECRET_KEY=YOUR_PAPER_SECRET_KEY_HERE
 ENVEOF
 
 # === 3. 创建 runner.py ===
