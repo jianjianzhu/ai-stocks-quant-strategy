@@ -1,5 +1,9 @@
 # AI Stocks Quant Trading Strategy
 
+## SMC V6 策略
+
+新增 [SMC V6 使用说明](strategies/smc/README.md) 与 [Pine 策略源码](strategies/smc/SMC_V6_strategy.pine)。该模块基于 LuxAlgo 修改，采用 **CC BY-NC-SA 4.0（非商业、相同方式共享）**，不适用根目录 MIT 许可。
+
 美股 AI 股量化交易策略 — MACD + EMA 金字塔加仓 + ATR 风控
 
 ## 📌 概述
@@ -119,7 +123,7 @@ bash deploy.sh
 
 ## 📄 许可
 
-本项目采用 MIT 许可证 — 详见 [LICENSE](LICENSE) 文件。
+除单独标注的第三方及衍生内容外，本项目采用 MIT 许可证，详见 [LICENSE](LICENSE)。`strategies/smc/` 中的 SMC 衍生策略及其文档采用 [CC BY-NC-SA 4.0](strategies/smc/LICENSE.md)，不适用 MIT 许可。
 
 ## ⚠️ 免责声明
 
