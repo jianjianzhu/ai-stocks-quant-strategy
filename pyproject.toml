@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-stocks-quant-strategy"
+version = "0.1.0"
+description = "Strategy resource distribution with licensed SMC Pine source and documentation"
+readme = "PACKAGING.md"
+requires-python = ">=3.10"
+license = "MIT AND CC-BY-NC-SA-4.0"
+license-files = ["LICENSE", "strategies/smc/LICENSE.md"]
+authors = [{name = "jianjianzhu"}]
+
+[project.urls]
+Repository = "https://github.com/jianjianzhu/ai-stocks-quant-strategy"
+Issues = "https://github.com/jianjianzhu/ai-stocks-quant-strategy/issues"
+
+[project.scripts]
+ai-stocks = "ai_stocks_quant.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ai_stocks_quant = ["resources/smc/*"]

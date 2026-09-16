@@ -1,5 +1,13 @@
 # AI Stocks Quant Trading Strategy
 
+## Python 软件包
+
+现已提供可安装的 Python 资源包，包含 SMC Pine 源码、原许可与使用文档。
+从本仓库运行 `python -m pip install .`，然后用 `ai-stocks list` 查看策略，
+用 `ai-stocks export smc --output ./smc-export` 导出到新目录。
+完整安装、构建及许可范围见 [Python 软件包说明](PACKAGING.md)。
+此版本提供离线资源管理；Pine 在 TradingView 运行，根目录 Python 回测和实盘脚本仍独立运行。
+
 ## SMC V6 策略
 
 新增 [SMC V6 使用说明](strategies/smc/README.md) 与 [Pine 策略源码](strategies/smc/SMC_V6_strategy.pine)。该模块基于 LuxAlgo 修改，采用 **CC BY-NC-SA 4.0（非商业、相同方式共享）**，不适用根目录 MIT 许可。

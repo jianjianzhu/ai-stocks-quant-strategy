@@ -1,0 +1,4 @@
+include PACKAGING.md LICENSE
+recursive-include strategies/smc *.pine *.md
+recursive-include tools *.py
+recursive-include tests *.py
